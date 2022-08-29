@@ -1,5 +1,7 @@
 # configure Connaisseur deployment
 deployment:
+  # Set to true if using ArgoCD so it will use argo hooks instead of helm hooks
+  isArgoCD: true
   replicasCount: 3
   image: securesystemsengineering/connaisseur:v2.6.3
   imagePullPolicy: IfNotPresent
