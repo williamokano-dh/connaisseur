@@ -28,8 +28,13 @@ metadata:
   labels:
     {{- include "helm.labels" . | nindent 4 }}
   annotations:
+    {{- if .Values.deployment.isArgoCD }}
+    "argocd.argoproj.io/hook": PreSync
+    "argocd.argoproj.io/hook-delete-policy": BeforeHookCreation, HookSucceeded, HookFailed
+    {{- else }}
     "helm.sh/hook": post-delete
     "helm.sh/hook-delete-policy": before-hook-creation, hook-succeeded, hook-failed
+    {{- end }}
 webhooks:
   - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
     failurePolicy: Ignore
@@ -59,7 +64,11 @@ metadata:
   labels:
     {{- include "helm.labels" . | nindent 4 }}
   annotations:
+    {{- if .Values.deployment.isArgoCD }}
+    "argocd.argoproj.io/hook": PostSync
+    {{- else }}
     "helm.sh/hook": post-install, post-upgrade, post-rollback
+    {{- end }}
 webhooks:
   - name: {{ .Chart.Name }}-svc.{{ .Release.Namespace }}.svc
     failurePolicy: {{ .Values.deployment.failurePolicy | default "Fail" }}
